@@ -2,6 +2,10 @@
 
 A containerised assistant that answers questions about the included Spotify-like web application architecture PDF. Retrieval is local-first and hybrid (FAISS semantic search + Neo4j AuraDB graph facts, fused with Reciprocal Rank Fusion). The RAG pipeline is built with LangChain and can be traced end to end in LangSmith. Web search happens only after the assistant offers it and the user explicitly replies yes.
 
+## Demo
+
+[Demo Video](https://github.com/user-attachments/assets/0bea95ae-596e-45b7-9c53-5ba5e87c8afa)
+
 ## Architecture
 
 ```text
