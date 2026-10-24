@@ -1,0 +1,38 @@
+name: spotifychat-hybrid-rag
+services:
+  fastapi-backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      VECTOR_INDEX_PATH: /app/faiss_index/index.faiss
+      CHUNKS_PATH: /app/faiss_index/chunks.json
+    volumes:
+      - ./faiss_index:/app/faiss_index
+    expose: ["8000"]
+    networks: [appnet]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health',timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+  streamlit-frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    restart: unless-stopped
+    environment:
+      BACKEND_URL: http://fastapi-backend:8000
+    depends_on:
+      fastapi-backend:
+        condition: service_started
+    ports:
+      - "127.0.0.1:${STREAMLIT_PORT:-8501}:8501"
+    networks: [appnet]
+
+networks:
+  appnet:
+    driver: bridge
