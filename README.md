@@ -148,15 +148,6 @@ python -m venv .venv
 
 It covers PDF loading and chunking, embeddings configuration, FAISS save/load/retrieval and the legacy loader, Neo4j retrieval and failure handling, RRF, the sufficiency gate, prompt rendering and LCEL answer generation, the trace structure LangSmith receives, LangSmith configuration, consent (yes uses the original question, no never searches, single-use, per-session isolation), and error mapping when OpenAI, Neo4j, FAISS or the search provider is unavailable.
 
-## Production deployment
-
-See [DEPLOYMENT.md](DEPLOYMENT.md) for the Hostinger VPS, DNS, Nginx and Certbot steps. Considerations:
-
-- Session history is in-process memory with TTL and a session cap; it resets on restart and is not shared across replicas. Use Redis for multi-replica deployments, and add authentication and rate limiting before public exposure.
-- Run ingestion as a one-off job, back up `faiss_index/` and the AuraDB data first, and avoid serving traffic while the graph is being replaced.
-- Keep AuraDB credentials, the OpenAI key and the LangSmith key only in the server's `.env`. Allow the VPS IP in AuraDB network settings.
-- LangSmith receives question text, retrieved document text and answers; enable it only if that is acceptable for your data.
-
 ## Known limitations
 
 - `langchain-community` (source of LangChain's FAISS vector store and `PyPDFLoader`) is marked by its maintainers as being sunset. 0.4.2 is the current release and works with `langchain-core` 1.7; there is no official standalone FAISS or PyPDF package yet. Revisit when one is published.
